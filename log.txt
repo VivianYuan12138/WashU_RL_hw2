@@ -100,3 +100,8 @@ Episode 90: Reward: 40.0, Length: 4434, Steps: 437969, Memory Length: 399173
 Episode 91: Reward: 15.0, Length: 4422, Steps: 442883, Memory Length: 403595
 Average Reward over 5 episodes: 28.4
 Episode 92: Reward: 30.0, Length: 4442, Steps: 447818, Memory Length: 408037
+Episode 93: Reward: 60.0, Length: 4453, Steps: 452766, Memory Length: 412490
+Episode 94: Reward: 4.0, Length: 4445, Steps: 457705, Memory Length: 416935
+Episode 95: Reward: 0.0, Length: 4450, Steps: 462649, Memory Length: 421385
+Episode 96: Reward: 24.0, Length: 4454, Steps: 467598, Memory Length: 425839
+Episode 97: Reward: 7.0, Length: 4451, Steps: 472544, Memory Length: 430290
