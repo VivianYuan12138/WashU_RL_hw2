@@ -17,7 +17,7 @@ REPLAY_MEMORY_SIZE = 1000000
 BATCH_SIZE = 32
 GAMMA = 0.99
 LEARNING_RATE = 3e-4
-TARGET_UPDATE_FREQ = -0.01
+TARGET_UPDATE_FREQ = 10000
 WEIGHT_DECAY = 1e-3
 
 def create_model(window, input_shape, num_actions,
@@ -67,6 +67,7 @@ if __name__ == '__main__':
 
     # Create Q-network
     model = create_model(window, input_shape, num_actions).to(device)
+    model.load_state_dict(torch.load('model.pth'))
     # Create replay memory
     replay_memory = ReplayMemory(REPLAY_MEMORY_SIZE, window)
     preprocessor = Preprocessor(input_shape)
@@ -85,8 +86,7 @@ if __name__ == '__main__':
     # Train agent
     agent.fit(env, 10000, max_episode_length=10000)
 
-    # Save model
-    torch.save(model.state_dict(), os.path.join(output, 'model.pth'))
+
 
 
 

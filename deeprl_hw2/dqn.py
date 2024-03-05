@@ -76,6 +76,7 @@ class DQNAgent:
         self.num_actions = num_actions
         self.target_network = self._init_target_network(q_network).to(device)
         self.device = device
+        self.window = self.preprocessor.window
 
         with open('log.txt', 'w') as f:
             f.write('')
@@ -191,6 +192,7 @@ class DQNAgent:
             tau = abs(self.target_update_freq)
             for target_param, local_param in zip(self.target_network.parameters(), self.q_network.parameters()):
                 target_param.data.copy_(tau * local_param.data + (1.0 - tau) * target_param.data)
+        self.target_network.eval()
 
         self.steps += 1
 
@@ -216,8 +218,8 @@ class DQNAgent:
                 # Process the next state for memory, without updating the state history
                 processed_state = self.preprocessor.process_state_for_memory(state[0])
                 processed_next_state = self.preprocessor.process_state_for_memory(next_state)
-
-                # Store the transition in memory
+                
+                # Add the transition to the replay memory
                 self.memory.append(processed_state, action, reward, processed_next_state, done)
 
                 self.steps += 1  # Increment the number of steps taken
@@ -235,7 +237,7 @@ class DQNAgent:
                 f.write(f"Episode {i+1}: Reward: {episode_reward}, Length: {episode_length}, Steps: {self.steps}, Memory Length: {len(self.memory)}\n")
 
             # Periodically evaluate the agent's performance
-            if i % 10 == 0:
+            if i % 50 == 0:
                 self.evaluate(env, 5, max_episode_length)
 
         env.close()
@@ -273,4 +275,6 @@ class DQNAgent:
         print(f"Average Reward over {num_episodes} episodes: {average_reward}")
         with open('log.txt', 'a') as f:
             f.write(f"Average Reward over {num_episodes} episodes: {average_reward}\n")
+        # save the model
+        torch.save(self.q_network.state_dict(), 'model.pth')
         return average_reward

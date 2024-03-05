@@ -66,10 +66,10 @@ class Preprocessor:
     episode.
     """
     ### XINHANG ###
-    def __init__(self, new_size=(84, 84), history_length=4):
+    def __init__(self, new_size=(84, 84), window =4):
       self.new_size = new_size
-      self.history_length = history_length
-      self.state_buffer = deque(maxlen=history_length)
+      self.window = window
+      self.state_buffer = deque(maxlen=window)
     
     # ### XINHANG ###
     # def process_state_for_network(self, state):
@@ -98,9 +98,9 @@ class Preprocessor:
     #     processed_state = resize(rgb2gray(state[0]), self.new_size).astype(np.float32)
     #     self.state_buffer.append(processed_state)
     #     # 确保状态缓冲区始终被填满
-    #     while len(self.state_buffer) < self.history_length:
+    #     while len(self.state_buffer) < self.window:
     #         self.state_buffer.append(processed_state)
-    #     stacked_state = np.stack(self.state_buffer, axis=0)  # 堆叠成 (history_length, new_size[0], new_size[1])
+    #     stacked_state = np.stack(self.state_buffer, axis=0)  # 堆叠成 (window, new_size[0], new_size[1])
     #     return stacked_state
     
 
@@ -123,8 +123,10 @@ class Preprocessor:
         self.state_buffer.append(processed_state)
 
         # 如果状态缓冲区未满，用第一个帧填充
-        while len(self.state_buffer) < self.history_length:
+        while len(self.state_buffer) < self.window:
             self.state_buffer.append(processed_state)
+
+        # 也可以ramdom 填充
 
         # 将状态缓冲区中的帧堆叠成一个 NumPy 数组
         stacked_state = np.stack(self.state_buffer, axis=0)  # 堆叠成 (C, H, W)
@@ -255,7 +257,7 @@ class ReplayMemory:
     clear()
       Reset the memory. Deletes all references to the samples.
     """
-    def __init__(self, max_size, window_length):
+    def __init__(self, max_size, window=4):
         """Setup memory.
 
         You should specify the maximum size o the memory. Once the
@@ -268,7 +270,7 @@ class ReplayMemory:
         """
         ### XINHANG ###
         self.max_size = max_size
-        self.window_length = window_length
+        self.window = window
         self.memory = deque(maxlen=max_size)
     
     def __len__(self):
@@ -334,17 +336,17 @@ class ReplayMemory:
     #     batch = []
     #     while len(batch) < batch_size:
     #         # 随机选择一个起始索引，保证有足够的帧可以形成一个完整的序列
-    #         index = random.randint(0, len(self.memory) - self.window_length)
+    #         index = random.randint(0, len(self.memory) - self.window)
     #         # 检查选取的序列是否跨越了回合的边界
-    #         if any(self.memory[index + i][4] for i in range(self.window_length - 1)):
+    #         if any(self.memory[index + i][4] for i in range(self.window - 1)):
     #             continue  # 如果在序列中间发现结束帧，则跳过此序列
 
     #         # 构建状态和下一状态的序列
-    #         states = [self.memory[index + i][0] for i in range(self.window_length)]
-    #         next_states = [self.memory[index + i][3] for i in range(self.window_length)]
-    #         actions = [self.memory[index + i][1] for i in range(self.window_length)]
-    #         rewards = [self.memory[index + i][2] for i in range(self.window_length)]
-    #         dones = [self.memory[index + i][4] for i in range(self.window_length)]
+    #         states = [self.memory[index + i][0] for i in range(self.window)]
+    #         next_states = [self.memory[index + i][3] for i in range(self.window)]
+    #         actions = [self.memory[index + i][1] for i in range(self.window)]
+    #         rewards = [self.memory[index + i][2] for i in range(self.window)]
+    #         dones = [self.memory[index + i][4] for i in range(self.window)]
 
     #         # 将状态序列转换为适当的张量格式
     #         state_batch = torch.tensor(states, dtype=torch.float32)
@@ -361,19 +363,19 @@ class ReplayMemory:
         batch = []
         while len(batch) < batch_size:
             # Randomly choose a starting index
-            start = random.randint(0, len(self.memory) - self.window_length)
+            start = random.randint(0, len(self.memory) - self.window)
             # Check if the sequence crosses an episode boundary or all rewards are zero
-            if any(self.memory[i][4] for i in range(start, start + self.window_length - 1)) or \
-              all(self.memory[i][2] == 0 for i in range(start, start + self.window_length)):
+            if any(self.memory[i][4] for i in range(start, start + self.window - 1)) or \
+              all(self.memory[i][2] == 0 for i in range(start, start + self.window)):
                 continue  # Skip if any state in the sequence (except the last) is terminal or all rewards are zero
 
             # Construct the state and next_state sequences
-            states = [self.memory[i][0] for i in range(start, start + self.window_length)]
-            next_states = [self.memory[i][3] for i in range(start, start + self.window_length)]
+            states = [self.memory[i][0] for i in range(start, start + self.window)]
+            next_states = [self.memory[i][3] for i in range(start, start + self.window)]
             # Get the other elements of the transition from the last sample in the sequence
-            action = self.memory[start + self.window_length - 1][1]
-            reward = self.memory[start + self.window_length - 1][2]
-            done = self.memory[start + self.window_length - 1][4]
+            action = self.memory[start + self.window - 1][1]
+            reward = self.memory[start + self.window - 1][2]
+            done = self.memory[start + self.window - 1][4]
 
             # Convert the state sequences to the appropriate tensor format
             state_batch = torch.tensor(np.array(states), dtype=torch.float32)
@@ -389,18 +391,18 @@ class ReplayMemory:
         batch = []
         while len(batch) < batch_size:
             # Randomly choose a starting index
-            start = random.randint(0, len(self.memory) - self.window_length)
+            start = random.randint(0, len(self.memory) - self.window)
             # Check if the sequence crosses an episode boundary
-            if any(self.memory[i][4] for i in range(start, start + self.window_length - 1)):
+            if any(self.memory[i][4] for i in range(start, start + self.window - 1)):
                 continue  # Skip if any state in the sequence (except the last) is terminal
            
             # Construct the state and next_state sequences
-            states = [self.memory[i][0] for i in range(start, start + self.window_length)]
-            next_states = [self.memory[i][3] for i in range(start, start + self.window_length)]
+            states = [self.memory[i][0] for i in range(start, start + self.window)]
+            next_states = [self.memory[i][3] for i in range(start, start + self.window)]
             # Get the other elements of the transition from the last sample in the sequence
-            action = self.memory[start + self.window_length - 1][1]
-            reward = self.memory[start + self.window_length - 1][2]
-            done = self.memory[start + self.window_length - 1][4]   
+            action = self.memory[start + self.window - 1][1]
+            reward = self.memory[start + self.window - 1][2]
+            done = self.memory[start + self.window - 1][4]   
 
             # Convert the state sequences to the appropriate tensor format
             state_batch = torch.tensor(np.array(states), dtype=torch.float32)
