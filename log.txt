@@ -1,0 +1,102 @@
+Episode 1: Reward: 39.0, Length: 4444, Steps: 4444, Memory Length: 4444
+Average Reward over 5 episodes: 25.6
+Episode 2: Reward: 22.0, Length: 4417, Steps: 8861, Memory Length: 8861
+Episode 3: Reward: 27.0, Length: 4449, Steps: 13310, Memory Length: 13310
+Episode 4: Reward: 25.0, Length: 4389, Steps: 17699, Memory Length: 17699
+Episode 5: Reward: 9.0, Length: 4458, Steps: 22157, Memory Length: 22157
+Episode 6: Reward: 24.0, Length: 4446, Steps: 26603, Memory Length: 26603
+Episode 7: Reward: 35.0, Length: 4448, Steps: 31051, Memory Length: 31051
+Episode 8: Reward: 28.0, Length: 4425, Steps: 35476, Memory Length: 35476
+Episode 9: Reward: 27.0, Length: 4448, Steps: 39924, Memory Length: 39924
+Episode 10: Reward: 24.0, Length: 4421, Steps: 44345, Memory Length: 44345
+Episode 11: Reward: 28.0, Length: 4425, Steps: 48770, Memory Length: 48770
+Average Reward over 5 episodes: 24.0
+Episode 12: Reward: 24.0, Length: 4465, Steps: 53594, Memory Length: 53235
+Episode 13: Reward: 30.0, Length: 4414, Steps: 58498, Memory Length: 57649
+Episode 14: Reward: 4.0, Length: 4416, Steps: 63405, Memory Length: 62065
+Episode 15: Reward: 29.0, Length: 4441, Steps: 68339, Memory Length: 66506
+Episode 16: Reward: 16.0, Length: 4438, Steps: 73271, Memory Length: 70944
+Episode 17: Reward: 0.0, Length: 4419, Steps: 78181, Memory Length: 75363
+Episode 18: Reward: 0.0, Length: 4427, Steps: 83099, Memory Length: 79790
+Episode 19: Reward: 18.0, Length: 4451, Steps: 88045, Memory Length: 84241
+Episode 20: Reward: 38.0, Length: 4475, Steps: 93017, Memory Length: 88716
+Episode 21: Reward: 30.0, Length: 4443, Steps: 97954, Memory Length: 93159
+Average Reward over 5 episodes: 29.0
+Episode 22: Reward: 15.0, Length: 4450, Steps: 102898, Memory Length: 97609
+Episode 23: Reward: 7.0, Length: 4443, Steps: 107835, Memory Length: 102052
+Episode 24: Reward: 0.0, Length: 4420, Steps: 112746, Memory Length: 106472
+Episode 25: Reward: 5.0, Length: 4426, Steps: 117664, Memory Length: 110898
+Episode 26: Reward: 11.0, Length: 4459, Steps: 122618, Memory Length: 115357
+Episode 27: Reward: 2.0, Length: 4421, Steps: 127531, Memory Length: 119778
+Episode 28: Reward: 19.0, Length: 4413, Steps: 132434, Memory Length: 124191
+Episode 29: Reward: 41.0, Length: 4439, Steps: 137366, Memory Length: 128630
+Episode 30: Reward: 30.0, Length: 4426, Steps: 142284, Memory Length: 133056
+Episode 31: Reward: 10.0, Length: 4435, Steps: 147212, Memory Length: 137491
+Average Reward over 5 episodes: 45.0
+Episode 32: Reward: 0.0, Length: 4437, Steps: 152142, Memory Length: 141928
+Episode 33: Reward: 18.0, Length: 4433, Steps: 157067, Memory Length: 146361
+Episode 34: Reward: 29.0, Length: 4441, Steps: 162002, Memory Length: 150802
+Episode 35: Reward: 17.0, Length: 4424, Steps: 166917, Memory Length: 155226
+Episode 36: Reward: 34.0, Length: 4448, Steps: 171859, Memory Length: 159674
+Episode 37: Reward: 33.0, Length: 4417, Steps: 176767, Memory Length: 164091
+Episode 38: Reward: 33.0, Length: 4435, Steps: 181695, Memory Length: 168526
+Episode 39: Reward: 12.0, Length: 4435, Steps: 186623, Memory Length: 172961
+Episode 40: Reward: 25.0, Length: 4420, Steps: 191534, Memory Length: 177381
+Episode 41: Reward: 33.0, Length: 4426, Steps: 196452, Memory Length: 181807
+Average Reward over 5 episodes: 28.4
+Episode 42: Reward: 45.0, Length: 4427, Steps: 201371, Memory Length: 186234
+Episode 43: Reward: 33.0, Length: 4442, Steps: 206306, Memory Length: 190676
+Episode 44: Reward: 23.0, Length: 4424, Steps: 211222, Memory Length: 195100
+Episode 45: Reward: 35.0, Length: 4429, Steps: 216143, Memory Length: 199529
+Episode 46: Reward: 8.0, Length: 4434, Steps: 221069, Memory Length: 203963
+Episode 47: Reward: 16.0, Length: 4423, Steps: 225984, Memory Length: 208386
+Episode 48: Reward: 18.0, Length: 4426, Steps: 230902, Memory Length: 212812
+Episode 49: Reward: 21.0, Length: 4404, Steps: 235795, Memory Length: 217216
+Episode 50: Reward: 4.0, Length: 4422, Steps: 240708, Memory Length: 221638
+Episode 51: Reward: 6.0, Length: 4437, Steps: 245638, Memory Length: 226075
+Average Reward over 5 episodes: 24.0
+Episode 52: Reward: 23.0, Length: 4416, Steps: 250545, Memory Length: 230491
+Episode 53: Reward: 12.0, Length: 4429, Steps: 255466, Memory Length: 234920
+Episode 54: Reward: 0.0, Length: 4471, Steps: 260434, Memory Length: 239391
+Episode 55: Reward: 0.0, Length: 4428, Steps: 265354, Memory Length: 243819
+Episode 56: Reward: 22.0, Length: 4450, Steps: 270298, Memory Length: 248269
+Episode 57: Reward: 10.0, Length: 4436, Steps: 275227, Memory Length: 252705
+Episode 58: Reward: 24.0, Length: 4410, Steps: 280127, Memory Length: 257115
+Episode 59: Reward: 31.0, Length: 4450, Steps: 285072, Memory Length: 261565
+Episode 60: Reward: 2.0, Length: 4434, Steps: 289998, Memory Length: 265999
+Episode 61: Reward: 10.0, Length: 4457, Steps: 294951, Memory Length: 270456
+Average Reward over 5 episodes: 24.2
+Episode 62: Reward: 0.0, Length: 4459, Steps: 299905, Memory Length: 274915
+Episode 63: Reward: 26.0, Length: 4422, Steps: 304818, Memory Length: 279337
+Episode 64: Reward: 30.0, Length: 4453, Steps: 309766, Memory Length: 283790
+Episode 65: Reward: 15.0, Length: 4444, Steps: 314704, Memory Length: 288234
+Episode 66: Reward: 24.0, Length: 4433, Steps: 319629, Memory Length: 292667
+Episode 67: Reward: 46.0, Length: 4441, Steps: 324564, Memory Length: 297108
+Episode 68: Reward: 8.0, Length: 4428, Steps: 329484, Memory Length: 301536
+Episode 69: Reward: 28.0, Length: 4418, Steps: 334393, Memory Length: 305954
+Episode 70: Reward: 5.0, Length: 4439, Steps: 339325, Memory Length: 310393
+Episode 71: Reward: 31.0, Length: 4430, Steps: 344247, Memory Length: 314823
+Average Reward over 5 episodes: 22.2
+Episode 72: Reward: 15.0, Length: 4465, Steps: 349208, Memory Length: 319288
+Episode 73: Reward: 18.0, Length: 4428, Steps: 354128, Memory Length: 323716
+Episode 74: Reward: 26.0, Length: 4436, Steps: 359057, Memory Length: 328152
+Episode 75: Reward: 2.0, Length: 4466, Steps: 364019, Memory Length: 332618
+Episode 76: Reward: 7.0, Length: 4446, Steps: 368959, Memory Length: 337064
+Episode 77: Reward: 2.0, Length: 4450, Steps: 373904, Memory Length: 341514
+Episode 78: Reward: 0.0, Length: 4442, Steps: 378839, Memory Length: 345956
+Episode 79: Reward: 65.0, Length: 4430, Steps: 383762, Memory Length: 350386
+Episode 80: Reward: 45.0, Length: 4426, Steps: 388679, Memory Length: 354812
+Episode 81: Reward: 0.0, Length: 4422, Steps: 393593, Memory Length: 359234
+Average Reward over 5 episodes: 0.0
+Episode 82: Reward: 4.0, Length: 4412, Steps: 398495, Memory Length: 363646
+Episode 83: Reward: 25.0, Length: 4441, Steps: 403429, Memory Length: 368087
+Episode 84: Reward: 24.0, Length: 4423, Steps: 408344, Memory Length: 372510
+Episode 85: Reward: 3.0, Length: 4465, Steps: 413305, Memory Length: 376975
+Episode 86: Reward: 11.0, Length: 4437, Steps: 418235, Memory Length: 381412
+Episode 87: Reward: 28.0, Length: 4435, Steps: 423163, Memory Length: 385847
+Episode 88: Reward: 2.0, Length: 4452, Steps: 428109, Memory Length: 390299
+Episode 89: Reward: 15.0, Length: 4440, Steps: 433043, Memory Length: 394739
+Episode 90: Reward: 40.0, Length: 4434, Steps: 437969, Memory Length: 399173
+Episode 91: Reward: 15.0, Length: 4422, Steps: 442883, Memory Length: 403595
+Average Reward over 5 episodes: 28.4
+Episode 92: Reward: 30.0, Length: 4442, Steps: 447818, Memory Length: 408037

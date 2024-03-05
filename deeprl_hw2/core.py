@@ -270,6 +270,9 @@ class ReplayMemory:
         self.max_size = max_size
         self.window_length = window_length
         self.memory = deque(maxlen=max_size)
+    
+    def __len__(self):
+        return len(self.memory)
 
     def append(self, state, action, reward, next_state, done):
         """Add a sample to the replay memory.
@@ -354,7 +357,34 @@ class ReplayMemory:
     #         batch.append((state_batch, action_batch, reward_batch, next_state_batch, done_batch))
 
     #     return batch
-        
+    def sample_batch_reward_isnot0(self, batch_size):
+        batch = []
+        while len(batch) < batch_size:
+            # Randomly choose a starting index
+            start = random.randint(0, len(self.memory) - self.window_length)
+            # Check if the sequence crosses an episode boundary or all rewards are zero
+            if any(self.memory[i][4] for i in range(start, start + self.window_length - 1)) or \
+              all(self.memory[i][2] == 0 for i in range(start, start + self.window_length)):
+                continue  # Skip if any state in the sequence (except the last) is terminal or all rewards are zero
+
+            # Construct the state and next_state sequences
+            states = [self.memory[i][0] for i in range(start, start + self.window_length)]
+            next_states = [self.memory[i][3] for i in range(start, start + self.window_length)]
+            # Get the other elements of the transition from the last sample in the sequence
+            action = self.memory[start + self.window_length - 1][1]
+            reward = self.memory[start + self.window_length - 1][2]
+            done = self.memory[start + self.window_length - 1][4]
+
+            # Convert the state sequences to the appropriate tensor format
+            state_batch = torch.tensor(np.array(states), dtype=torch.float32)
+            next_state_batch = torch.tensor(np.array(next_states), dtype=torch.float32)
+            action_batch = torch.tensor(action, dtype=torch.int64)
+            reward_batch = torch.tensor(reward, dtype=torch.float32)
+            done_batch = torch.tensor(done, dtype=torch.float32)
+
+            batch.append((state_batch, action_batch, reward_batch, next_state_batch, done_batch))
+        return batch
+    
     def sample_batch(self, batch_size):
         batch = []
         while len(batch) < batch_size:
