@@ -5,6 +5,7 @@ from deeprl_hw2.utils import get_soft_target_model_updates, get_hard_target_mode
 import torch
 from collections import deque
 from torch import Tensor
+from gymnasium.wrappers import RecordVideo
 
 class DQNAgent:
     """Class implementing DQN.
@@ -78,7 +79,7 @@ class DQNAgent:
         self.device = device
         self.window = self.preprocessor.window
 
-        with open('log.txt', 'w') as f:
+        with open('log.txt', 'a') as f:
             f.write('')
 
 
@@ -278,3 +279,59 @@ class DQNAgent:
         # save the model
         torch.save(self.q_network.state_dict(), 'model.pth')
         return average_reward
+    
+    def record_video(self, env, model_path, output_directory, num_episodes=1, max_episode_length=None):
+        """
+        Record the agent playing with the model loaded from the given path.
+
+        Parameters:
+        - env: The Gym environment to play in.
+        - model_path: Path to the model weights.
+        - output_directory: Directory where the recorded videos will be saved.
+        - num_episodes: Number of episodes to record.
+        - max_episode_length: Optional limit on the number of steps per episode.
+        """
+        # Load model weights
+        self.q_network.load_state_dict(torch.load(model_path, map_location=self.device))
+        self.q_network.to(self.device)
+        self.q_network.eval()  # Set the model to evaluation mode
+
+        # open record_file.txt
+        with open('record_file.txt', 'a') as f:
+            f.write('')
+        # Wrap the environment to record video
+        env = RecordVideo(env, video_folder=output_directory, episode_trigger=lambda episode: True)
+        total_rewards = []
+        for episode in range(num_episodes):
+            state = env.reset()
+            self.preprocessor.reset()  # Reset the preprocessor for the new episode
+            episode_reward = 0
+            episode_length = 0  # Initialize episode length
+            done = False
+
+            while not done:
+                # Process the current state for the network, updating the state history
+                processed_state = self.preprocessor.process_state_for_network(state[0]).to(self.device)
+
+                action = self.select_action(processed_state, train=False)  # Select an action based on the processed state
+                next_state, reward, done, _ , _ = env.step(action)  # Take the action in the environment
+
+                episode_reward += reward
+                episode_length += 1  # Increment episode length
+
+                state = next_state  # Move to the next state
+
+                # Check if the episode should end
+                if max_episode_length and episode_length >= max_episode_length:
+                    done = True
+
+            total_rewards.append(episode_reward)  # Store total reward for this episode
+            print(f"Episode {episode}: Reward: {episode_reward}, Length: {episode_length}")
+            with open('record_file.txt', 'a') as f:
+                f.write(f"Episode {episode}: Reward: {episode_reward}, Length: {episode_length}\n")
+
+        average_reward = np.mean(total_rewards)
+        print(f"Average Reward over {num_episodes} episodes: {average_reward}")
+        with open('record_file.txt', 'a') as f:
+            f.write(f"Average Reward over {num_episodes} episodes: {average_reward}\n")
+    

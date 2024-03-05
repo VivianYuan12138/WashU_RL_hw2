@@ -1,0 +1,17 @@
+Episode 1: Reward: 10.0, Length: 4433
+Episode 2: Reward: 29.0, Length: 4451
+Episode 3: Reward: 35.0, Length: 4429
+Episode 4: Reward: 43.0, Length: 4443
+Episode 5: Reward: 21.0, Length: 4439
+Episode 1: Reward: 23.0, Length: 4422
+Episode 2: Reward: 29.0, Length: 4430
+Episode 3: Reward: 18.0, Length: 4411
+Episode 4: Reward: 46.0, Length: 4434
+Episode 5: Reward: 11.0, Length: 4471
+Average Reward over 5 episodes: 25.4
+Episode 0: Reward: 31.0, Length: 4426
+Episode 1: Reward: 27.0, Length: 4447
+Episode 2: Reward: 30.0, Length: 4429
+Episode 3: Reward: 35.0, Length: 4442
+Episode 4: Reward: 41.0, Length: 4409
+Average Reward over 5 episodes: 32.8
