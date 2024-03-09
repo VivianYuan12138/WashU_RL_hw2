@@ -1,6 +1,6 @@
 from deeprl_hw2.dqn import DQNAgent
 from deeprl_hw2.objectives import mean_huber_loss
-from deeprl_hw2.model import DQN
+from deeprl_hw2.models import *
 from deeprl_hw2.core import ReplayMemory, Preprocessor
 from deeprl_hw2.policy import UniformRandomPolicy,GreedyEpsilonPolicy,LinearDecayGreedyEpsilonPolicy
 import os
@@ -11,19 +11,23 @@ import gymnasium
 from torch.optim.lr_scheduler import StepLR
 
 
-
 # Hyperparameters
-REPLAY_MEMORY_SIZE = 1000000
+REPLAY_MEMORY_SIZE = 100000
 BATCH_SIZE = 32
 GAMMA = 0.99
-LEARNING_RATE = 3e-4
-TARGET_UPDATE_FREQ = 10000
-WEIGHT_DECAY = 1e-3
+LEARNING_RATE = 3e-5
+TARGET_UPDATE_FREQ = -0.01
+WEIGHT_DECAY = 1e-4
+
+# 1. model build  model = DQN(input_shape, num_actions)
+# 2. 该路径 model_path = '/home/serv
+# 3. 注意policy
 
 def create_model(window, input_shape, num_actions,
                  model_name='q_network'):
     # Create a DQN model
     input_shape = (window, *input_shape)
+    #model = LinearNetwork(input_shape, num_actions)
     model = DQN(input_shape, num_actions)
     return model
 
@@ -69,23 +73,25 @@ if __name__ == '__main__':
     model = create_model(window, input_shape, num_actions).to(device)
     # Create replay memory
     replay_memory = ReplayMemory(REPLAY_MEMORY_SIZE, window)
-    preprocessor = Preprocessor(input_shape)
-    policy = GreedyEpsilonPolicy(0.1)
+    preprocessor = Preprocessor(window = window)
+    base_policy = GreedyEpsilonPolicy(1)
+    policy = LinearDecayGreedyEpsilonPolicy(base_policy, 'epsilon', 1, 0.1, 500000)
     num_burn_in = 50000
     train_freq = 10
     num_actions = env.action_space.n
     # Create DQN agent
     agent = DQNAgent(model, preprocessor, replay_memory, policy, GAMMA,\
                     TARGET_UPDATE_FREQ, num_burn_in,train_freq, BATCH_SIZE, num_actions, device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+    # optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+    optimizer = torch.optim.RMSprop(model.parameters(), lr=LEARNING_RATE, alpha=0.99, eps=1e-08, \
+                                     weight_decay=WEIGHT_DECAY, momentum=0, centered=False)
     loss_func = mean_huber_loss
     agent.compile(optimizer, loss_func)
 
-    env_name = 'Enduro-v0'
     env = gymnasium.make(env_name, render_mode="rgb_array")
 
-    model_path = 'model.pth'  # Specify the path to the model
-    output_directory = './videos'  # Specify the path to the output directory
+    model_path = '/home/server1/Documents/xinhang/RL-Enduro/RL-Enduro/models/DQN-Double_50000_Thu_Mar__7_11:05:30_2024.model'  # Specify the path to the model
+    output_directory = './videos_ddqn'  # Specify the path to the output directory
 
     # Record videos
-    agent.record_video(env, model_path, output_directory, num_episodes=5)
+    agent.record_video(env, model_path, output_directory, num_episodes=100)

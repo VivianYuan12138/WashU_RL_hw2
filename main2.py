@@ -12,11 +12,11 @@ from torch.optim.lr_scheduler import StepLR
 
 
 # Hyperparameters
-REPLAY_MEMORY_SIZE = 100000
+REPLAY_MEMORY_SIZE = 1000000
 BATCH_SIZE = 32
 GAMMA = 0.99
-LEARNING_RATE = 1e-4
-TARGET_UPDATE_FREQ = -0.01
+LEARNING_RATE = 3e-5
+TARGET_UPDATE_FREQ = -0.1
 WEIGHT_DECAY = 1e-4
 
 
@@ -47,7 +47,7 @@ def get_output_folder(parent_dir, env_name):
 
 if __name__ == '__main__':
     seed = 0
-    env_name = 'SpaceInvaders-v0'
+    env_name = 'Enduro-v0'
     input_shape = (84, 84)
     window = 4
     output = 'atari-v0'
@@ -59,6 +59,7 @@ if __name__ == '__main__':
     torch.manual_seed(seed)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # device = "cpu"
     print(f"Using device: {device}")
 
     # Create environment
@@ -71,15 +72,15 @@ if __name__ == '__main__':
     model = create_model(window, input_shape, num_actions).to(device)
     ### add load model
     ### XINHANG ###
-    model.load_state_dict(torch.load('model.pth'))
-    # print("Model loaded")
+    model.load_state_dict(torch.load('model2.pth'))
+    print("Model loaded")
     # Create replay memory
     replay_memory = ReplayMemory(REPLAY_MEMORY_SIZE, window)
     preprocessor = Preprocessor(window = window)
-    base_policy = GreedyEpsilonPolicy(1)
-    policy = LinearDecayGreedyEpsilonPolicy(base_policy, 'epsilon', 1, 0.001, 300000)
-    num_burn_in = 5000
-    train_freq = 1
+    base_policy = GreedyEpsilonPolicy(0.05)
+    policy = LinearDecayGreedyEpsilonPolicy(base_policy, 'epsilon', 1, 0.001, 1000000)
+    num_burn_in = 10000
+    train_freq = 10
     num_actions = env.action_space.n
     # Create DQN agent
     agent = DQNAgent(model, preprocessor, replay_memory, policy, GAMMA,\

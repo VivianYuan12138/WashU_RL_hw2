@@ -110,7 +110,12 @@ class GreedyEpsilonPolicy(Policy):
         """
 
         if np.random.random() < self.epsilon:
-            return np.random.randint(0, len(q_values))
+            #print("self.epsilon: ", self.epsilon)
+            #print("i am here")
+            #print("len(q_values): ", len(q_values))
+            action = np.random.randint(0, q_values.shape[1])
+            #print("action: ", action)
+            return action
         else:
             return np.argmax(q_values)
 
@@ -157,11 +162,15 @@ class LinearDecayGreedyEpsilonPolicy(Policy):
         Any:
           Selected action.
         """
+        
+        #print("q_values: ", q_values)
+        
         if is_training:
             self.step += 1
             if self.step <= self.num_steps:
                 self.epsilon -= (self.start_value - self.end_value) / self.num_steps
-            return GreedyEpsilonPolicy(self.epsilon).select_action(q_values)
+            return GreedyEpsilonPolicy(self.end_value).select_action(q_values)
+            #return GreedyEpsilonPolicy(self.epsilon).select_action(q_values)
         else:
             return GreedyEpsilonPolicy(self.end_value).select_action(q_values)
 

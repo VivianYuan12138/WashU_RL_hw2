@@ -79,7 +79,7 @@ class DQNAgent:
         self.device = device
         self.window = self.preprocessor.window
 
-        with open('log.txt', 'a') as f:
+        with open('log_a.txt', 'a') as f:
             f.write('')
 
 
@@ -146,9 +146,9 @@ class DQNAgent:
         selected action
         """
         
-        # return self.policy.select_action(self.calc_q_values(state).cpu().detach().numpy(), is_training=train)
+        return self.policy.select_action(self.calc_q_values(state).cpu().detach().numpy(), is_training=train)
     
-        return self.policy.select_action(self.calc_q_values(state).cpu().detach().numpy())
+        # return self.policy.select_action(self.calc_q_values(state).cpu().detach().numpy())
 
 
         # q_values = self.calc_q_values(state).detach().numpy()
@@ -180,6 +180,8 @@ class DQNAgent:
 
         # Compute loss
         loss = self.loss_func(current_q_values, expected_q_values.detach())
+        
+        print("loss: ", loss)
 
         # Optimize the model
         self.optimizer.zero_grad()
@@ -201,21 +203,46 @@ class DQNAgent:
 
     def fit(self, env, num_iterations, max_episode_length=None):
         for i in range(num_iterations):
+            print("Episode: ", i+1)
             state = env.reset()
             self.preprocessor.reset()  # Reset the preprocessor for the new episode
             episode_reward = 0
             episode_length = 0  # Initialize episode length
-
+            initial_lives = 3
+            step_record = []
             while True:
                 # Process the current state for the network, updating the state history
                 processed_state = self.preprocessor.process_state_for_network(state[0]).to(self.device)
                 
                 action = self.select_action(processed_state)  # Select an action based on the processed state
-                next_state, reward, done, _, _ = env.step(action)  # Take the action in the environment
+                if len(step_record) <= 50:
+                    step_record.append(action)
+                if len(step_record) == 50:
+                    print("step_record: ", step_record)
+                    with open('log_a.txt', 'a') as f:
+                        f.write(f"step_record: {step_record}\n")
+                next_state, reward, done, truncated, info = env.step(action)  # Take the action in the environment
+                ### info format: {'lives': 3, 'episode_frame_number': 5, 'frame_number': 5}
+                # print("info: ", info)
+                #### MODIFY THE REWARD HERE###
+                
+                ###1. negative reward for staying still
+                
+                #print("action: ", action)
+                
+                #clip reward to -1, 1
+                # reward = np.clip(reward, -1, 1)
+                
+                ###
+                #current_lives = info['lives']
+                #if current_lives < initial_lives:
+                #    reward = - 100
+                #    initial_lives = current_lives
 
                 episode_reward += reward
                 episode_length += 1  # Increment episode length
 
+                
                 # Process the next state for memory, without updating the state history
                 processed_state = self.preprocessor.process_state_for_memory(state[0])
                 processed_next_state = self.preprocessor.process_state_for_memory(next_state)
@@ -234,11 +261,11 @@ class DQNAgent:
                     break
 
             # print(f"Episode {i+1}: Reward: {episode_reward}, Length: {episode_length}, Steps: {self.steps}, Memory Length: {len(self.memory)}")
-            with open('log.txt', 'a') as f:
+            with open('log_a.txt', 'a') as f:
                 f.write(f"Episode {i+1}: Reward: {episode_reward}, Length: {episode_length}, Steps: {self.steps}, Memory Length: {len(self.memory)}\n")
 
             # Periodically evaluate the agent's performance
-            if i % 50 == 0:
+            if i % 20 == 0:
                 self.evaluate(env, 5, max_episode_length)
 
         env.close()
@@ -274,10 +301,10 @@ class DQNAgent:
 
         average_reward = np.mean(total_rewards)
         print(f"Average Reward over {num_episodes} episodes: {average_reward}")
-        with open('log.txt', 'a') as f:
+        with open('log_a.txt', 'a') as f:
             f.write(f"Average Reward over {num_episodes} episodes: {average_reward}\n")
         # save the model
-        torch.save(self.q_network.state_dict(), 'model.pth')
+        torch.save(self.q_network.state_dict(), 'model2.pth')
         return average_reward
     
     def record_video(self, env, model_path, output_directory, num_episodes=1, max_episode_length=None):
@@ -295,6 +322,8 @@ class DQNAgent:
         self.q_network.load_state_dict(torch.load(model_path, map_location=self.device))
         self.q_network.to(self.device)
         self.q_network.eval()  # Set the model to evaluation mode
+
+        self.target_network = self._init_target_network(self.q_network).to(self.device)
 
         # open record_file.txt
         with open('record_file.txt', 'a') as f:
@@ -327,11 +356,14 @@ class DQNAgent:
 
             total_rewards.append(episode_reward)  # Store total reward for this episode
             print(f"Episode {episode}: Reward: {episode_reward}, Length: {episode_length}")
-            with open('record_file.txt', 'a') as f:
+            path = "record.txt"
+            with open(path, 'a') as f:
                 f.write(f"Episode {episode}: Reward: {episode_reward}, Length: {episode_length}\n")
-
+        #also get the max index of the total_rewards
+        max_index = np.argmax(total_rewards)
         average_reward = np.mean(total_rewards)
-        print(f"Average Reward over {num_episodes} episodes: {average_reward}")
+        std_reward = np.std(total_rewards)  
+        print(f"Average Reward over {num_episodes} episodes: {average_reward}, std: {std_reward}, max_index: {max_index}")
         with open('record_file.txt', 'a') as f:
-            f.write(f"Average Reward over {num_episodes} episodes: {average_reward}\n")
+            f.write(f"Average Reward over {num_episodes} episodes: {average_reward}, std: {std_reward}\n")
     

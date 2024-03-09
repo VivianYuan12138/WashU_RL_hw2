@@ -66,10 +66,23 @@ class Preprocessor:
     episode.
     """
     ### XINHANG ###
-    def __init__(self, new_size=(84, 84), window =4):
-      self.new_size = new_size
-      self.window = window
-      self.state_buffer = deque(maxlen=window)
+    def __init__(self, new_size=(110, 84), window=4, crop_area = (13, 97, 0, 84)):
+        """Setup the preprocessor.
+
+        Parameters
+        ----------
+        new_size: tuple
+          The size to reshape the state to. It is suggested that the
+          state be a square, so only one number is needed. For example,
+          (84, 84) will reshape the state to 84x84.
+        window: int
+          The number of frames to stack together. This is for games
+          like Atari where the movement of objects is important.
+        """
+        self.new_size = new_size
+        self.window = window
+        self.crop_area = crop_area
+        self.state_buffer = deque(maxlen=window)
     
     # ### XINHANG ###
     # def process_state_for_network(self, state):
@@ -118,8 +131,11 @@ class Preprocessor:
           A tensor suitable for being an input to the network. The tensor shape is (N, C, H, W).
 
         """
-        # 首先处理当前状态并将其添加到状态缓冲区
-        processed_state = resize(rgb2gray(state), self.new_size).astype(np.float32)
+        # Convert to grayscale and downsample the image
+        cropped_state = self._preprocess_common_steps(state)
+        
+        # Convert to float32 for compatibility with most ML frameworks
+        processed_state = cropped_state.astype(np.float32)
         self.state_buffer.append(processed_state)
 
         # 如果状态缓冲区未满，用第一个帧填充
@@ -160,7 +176,9 @@ class Preprocessor:
           modified in any manner.
 
         """
-        return np.uint8(resize(rgb2gray(state), self.new_size) * 255)
+        # Convert to grayscale and downsample the image
+        cropped_state = self._preprocess_common_steps(state)
+        return np.uint8(cropped_state*255)
 
     def process_batch(self, samples):
         """Process batch of samples.
@@ -181,7 +199,7 @@ class Preprocessor:
           the list length will generally stay the same.
         """
         # 批量处理，不更新状态历史记录
-        processed_states = np.array([resize(rgb2gray(state), self.new_size).astype(np.float32) for state in samples])
+        processed_states = [self.process_state_for_network(sample.state) for sample in samples]
         return processed_states
 
     def process_reward(self, reward):
@@ -202,6 +220,13 @@ class Preprocessor:
           The processed reward
         """
         return np.clip(reward, -1., 1.)
+    
+    def _preprocess_common_steps(self, state):
+        gray_state = rgb2gray(state)
+        resized_state = resize(gray_state, self.new_size, anti_aliasing=True)
+        crop_start_y, crop_end_y, crop_start_x, crop_end_x = self.crop_area
+        cropped_state = resized_state[crop_start_y:crop_end_y, crop_start_x:crop_end_x]
+        return cropped_state
 
     def reset(self):
         """Reset any internal state.
@@ -400,7 +425,8 @@ class ReplayMemory:
             states = [self.memory[i][0] for i in range(start, start + self.window)]
             next_states = [self.memory[i][3] for i in range(start, start + self.window)]
             # Get the other elements of the transition from the last sample in the sequence
-            action = self.memory[start + self.window - 1][1]
+            # action = self.memory[start + self.window - 1][1]
+            action = self.memory[start][1]
             reward = self.memory[start + self.window - 1][2]
             done = self.memory[start + self.window - 1][4]   
 
